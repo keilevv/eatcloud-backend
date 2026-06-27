@@ -1,6 +1,7 @@
 import { createApp } from './app';
-import { appConfig } from './config';
+import { appConfig, validateConfig } from './config';
 import { connectDatabase, disconnectDatabase } from './database';
+import './models';
 import { loadEnvironment } from './utils/env-loader';
 import { logger } from './utils/logger';
 
@@ -8,6 +9,7 @@ loadEnvironment();
 
 const startServer = async (): Promise<void> => {
   try {
+    validateConfig();
     await connectDatabase();
     logger.info('Database connection established');
 

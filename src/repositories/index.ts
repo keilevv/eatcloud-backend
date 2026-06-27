@@ -1,3 +1,1 @@
-// Repositories barrel export — add repositories here as they are implemented.
-
-export {};
+export { UserRepository, userRepository } from './UserRepository';

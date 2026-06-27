@@ -43,3 +43,9 @@ export const appConfig: AppConfig = {
     expiresIn: getOptionalEnv('JWT_EXPIRES_IN', '7d'),
   },
 };
+
+export const validateConfig = (): void => {
+  if (!appConfig.jwt.secret) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+};

@@ -1,3 +1,2 @@
-// Validators barrel export — add request validators here as they are implemented.
-
-export {};
+export { loginValidator, registerValidator } from './auth.validator';
+export { validate } from './validate.middleware';

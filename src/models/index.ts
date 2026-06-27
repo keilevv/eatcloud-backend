@@ -1,3 +1,2 @@
-// Models barrel export — add Sequelize models here as they are implemented.
-
-export {};
+export { User } from './User';
+export type { UserAttributes, UserCreationAttributes } from './User';

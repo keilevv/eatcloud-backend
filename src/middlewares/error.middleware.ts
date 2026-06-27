@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { UniqueConstraintError, ValidationError } from 'sequelize';
 import { ERROR_MESSAGES, HTTP_STATUS } from '../constants';
 import { appConfig } from '../config';
 import { AppError } from '../utils/app-error';
@@ -27,6 +28,27 @@ export const errorHandler = (
       success: false,
       message: err.message,
       errors: err.errors,
+    });
+    return;
+  }
+
+  if (err instanceof UniqueConstraintError) {
+    res.status(HTTP_STATUS.CONFLICT).json({
+      success: false,
+      message: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS,
+      errors: [],
+    });
+    return;
+  }
+
+  if (err instanceof ValidationError) {
+    res.status(HTTP_STATUS.BAD_REQUEST).json({
+      success: false,
+      message: ERROR_MESSAGES.VALIDATION_FAILED,
+      errors: err.errors.map((error) => ({
+        field: error.path ?? 'unknown',
+        message: error.message,
+      })),
     });
     return;
   }

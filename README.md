@@ -11,7 +11,7 @@ Production-ready REST API backend for the EatCloud platform, consumed by the Nex
 - **ORM:** Sequelize
 - **Package Manager:** pnpm
 
-Additional tooling includes ESLint, Prettier, Husky, lint-staged, and Docker.
+Additional tooling includes ESLint, Prettier, Husky, lint-staged, Swagger, and Docker.
 
 ## Folder Structure
 
@@ -22,7 +22,7 @@ eatcloud-backend/
 │   ├── constants/        # Reusable constants
 │   ├── controllers/      # HTTP request handlers
 │   ├── database/         # Sequelize setup, migrations, seeders
-│   ├── docs/             # API documentation (future)
+│   ├── docs/             # OpenAPI / Swagger documentation
 │   ├── dto/              # Data transfer objects
 │   ├── interfaces/       # Shared interfaces
 │   ├── middlewares/      # Express middleware
@@ -73,8 +73,22 @@ eatcloud-backend/
 | `DATABASE_NAME`    | Database name                        |
 | `DATABASE_USER`    | Database user                        |
 | `DATABASE_PASSWORD`| Database password                    |
-| `JWT_SECRET`       | Secret key for JWT signing           |
-| `JWT_EXPIRES_IN`   | JWT expiration duration              |
+| `JWT_SECRET`       | Secret key for JWT signing (**required**) |
+| `JWT_EXPIRES_IN`   | JWT expiration duration (default: `7d`)     |
+
+## Running Migrations
+
+Before using authentication endpoints, apply database migrations:
+
+```bash
+pnpm db:migrate
+```
+
+This creates the `users` table and required indexes. To undo the last migration:
+
+```bash
+pnpm db:migrate:undo
+```
 
 ## Running Locally
 
@@ -92,13 +106,19 @@ eatcloud-backend/
    CREATE DATABASE eatcloud;
    ```
 
-3. Start the development server:
+3. Run database migrations:
+
+   ```bash
+   pnpm db:migrate
+   ```
+
+4. Start the development server:
 
    ```bash
    pnpm dev
    ```
 
-4. Verify the health endpoint:
+5. Verify the health endpoint:
 
    ```bash
    curl http://localhost:3000/health
@@ -113,6 +133,127 @@ eatcloud-backend/
      "timestamp": "2026-06-27T00:00:00.000Z"
    }
    ```
+
+## Authentication Overview
+
+The authentication module provides JWT-based access for the Next.js web app and React Native mobile clients.
+
+| Endpoint | Method | Auth | Description |
+| -------- | ------ | ---- | ----------- |
+| `/api/auth/register` | POST | No | Create a new user account |
+| `/api/auth/login` | POST | No | Authenticate and receive a JWT |
+| `/api/auth/me` | GET | Bearer JWT | Get the current user profile |
+
+### JWT Flow
+
+1. Client sends credentials to `POST /api/auth/login`.
+2. Server validates credentials and returns a signed JWT access token.
+3. Client includes the token in subsequent requests: `Authorization: Bearer <token>`.
+4. The `authenticate` middleware verifies the token and attaches the user to the request.
+5. Protected routes (e.g. `GET /api/auth/me`) use the authenticated user context.
+
+The architecture separates token generation (`utils/jwt.ts`) from business logic (`AuthService`), so refresh tokens can be added later without refactoring the service layer.
+
+### How Passwords Are Stored
+
+- Passwords are hashed with **bcrypt** (cost factor **10**) before storage.
+- Hashing happens in the service layer via `utils/password.ts` — never in controllers.
+- The `password` column is excluded from all default model scopes and API responses.
+- Plain-text passwords are never logged or returned.
+
+## Swagger Documentation
+
+Interactive API documentation is available at:
+
+- **Swagger UI:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+- **OpenAPI JSON:** [http://localhost:3000/api-docs.json](http://localhost:3000/api-docs.json)
+
+## Testing Authentication
+
+### Example: Register
+
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "password": "securePass123"
+  }'
+```
+
+Response (`201`):
+
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Jane Doe",
+    "email": "jane@example.com"
+  }
+}
+```
+
+### Example: Login
+
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "jane@example.com",
+    "password": "securePass123"
+  }'
+```
+
+Response (`200`):
+
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Jane Doe",
+      "email": "jane@example.com"
+    }
+  }
+}
+```
+
+### Example: Get Current User
+
+```bash
+curl http://localhost:3000/api/auth/me \
+  -H "Authorization: Bearer <your-jwt-token>"
+```
+
+Response (`200`):
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Jane Doe",
+    "email": "jane@example.com"
+  }
+}
+```
+
+### Postman Collection
+
+Import the collection from `docs/postman/EatCloud-Auth.postman_collection.json`.
+
+Collection variables:
+
+| Variable | Description |
+| -------- | ----------- |
+| `baseUrl` | API base URL (default: `http://localhost:3000`) |
+| `jwtToken` | Automatically set after a successful login |
 
 ## Running with Docker
 

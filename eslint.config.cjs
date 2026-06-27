@@ -7,7 +7,12 @@ module.exports = [
   eslint.configs.recommended,
   eslintConfigPrettier,
   {
-    ignores: ['dist/**', 'node_modules/**', 'src/database/config.js'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      'src/database/config.js',
+      'src/database/migrations/**',
+    ],
   },
   {
     files: ['src/**/*.ts'],
