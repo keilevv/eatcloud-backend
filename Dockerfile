@@ -25,6 +25,7 @@ COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --prod --frozen-lockfile || pnpm install --prod
 
 COPY --from=builder /app/dist ./dist
+COPY src/formatted.json ./src/formatted.json
 COPY .sequelizerc ./
 COPY src/database/config.js ./src/database/config.js
 

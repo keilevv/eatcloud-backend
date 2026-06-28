@@ -8,7 +8,7 @@ const swaggerDefinition = {
     title: 'EatCloud API',
     version: '1.0.0',
     description:
-      'REST API for the EatCloud platform. Authentication endpoints support JWT-based access tokens.',
+      'REST API for the EatCloud platform. Authentication and dashboard analytics endpoints.',
   },
   servers: [
     {
@@ -148,12 +148,70 @@ const swaggerDefinition = {
         },
       },
     },
+    parameters: {
+      DonorFilter: {
+        in: 'query',
+        name: 'donor',
+        schema: { type: 'string', example: 'exito' },
+        description: 'Filter by donor name',
+      },
+      DonationPointFilter: {
+        in: 'query',
+        name: 'donationPoint',
+        schema: { type: 'string', example: 'EXITO IPIALES' },
+        description: 'Filter by donation point name',
+      },
+      CityFilter: {
+        in: 'query',
+        name: 'city',
+        schema: { type: 'string', example: 'CALI' },
+        description: 'Filter by city',
+      },
+      DepartmentFilter: {
+        in: 'query',
+        name: 'department',
+        schema: { type: 'string', example: 'Valle del Cauca' },
+        description: 'Filter by department',
+      },
+      RiskLevelFilter: {
+        in: 'query',
+        name: 'riskLevel',
+        schema: {
+          type: 'string',
+          enum: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'],
+          example: 'HIGH',
+        },
+        description: 'Filter by risk level',
+      },
+      BeneficiaryTypeFilter: {
+        in: 'query',
+        name: 'beneficiaryType',
+        schema: { type: 'string', enum: ['T1', 'T2', 'T3'], example: 'T1' },
+        description: 'Filter by beneficiary type',
+      },
+      BeneficiaryStatusFilter: {
+        in: 'query',
+        name: 'beneficiaryStatus',
+        schema: { type: 'string', example: 'activo' },
+        description: 'Filter by beneficiary status',
+      },
+      LimitFilter: {
+        in: 'query',
+        name: 'limit',
+        schema: { type: 'integer', minimum: 1, maximum: 500, example: 10 },
+        description: 'Limit the number of ranked or listed results',
+      },
+    },
   },
 };
 
 const swaggerOptions: swaggerJsdoc.Options = {
   definition: swaggerDefinition,
-  apis: ['./src/routes/auth.routes.ts', './src/routes/health.routes.ts'],
+  apis: [
+    './src/routes/auth.routes.ts',
+    './src/routes/dashboard.routes.ts',
+    './src/routes/health.routes.ts',
+  ],
 };
 
 export const swaggerSpec = swaggerJsdoc(swaggerOptions);

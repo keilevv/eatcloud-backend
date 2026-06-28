@@ -1,3 +1,6 @@
-// Interfaces barrel export — add shared interfaces here as they are implemented.
-
-export {};
+export type {
+  BeneficiaryType,
+  DashboardFilters,
+  NormalizedDashboardData,
+  RiskLevel,
+} from './dashboard.interface';

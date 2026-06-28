@@ -246,7 +246,7 @@ Response (`200`):
 
 ### Postman Collection
 
-Import the collection from `docs/postman/EatCloud-Auth.postman_collection.json`.
+Import the collection from `docs/postman/EatCloud-Auth.postman_collection.json`. It includes **Authentication** and **Dashboard** folders. The login request automatically stores the JWT in the `jwtToken` variable for all protected dashboard requests.
 
 Collection variables:
 
@@ -254,6 +254,105 @@ Collection variables:
 | -------- | ----------- |
 | `baseUrl` | API base URL (default: `http://localhost:3000`) |
 | `jwtToken` | Automatically set after a successful login |
+
+## Dashboard Analytics
+
+The dashboard module is the single source of truth for analytics consumed by the web and mobile clients. The frontend never reads `src/formatted.json` directly — all data is exposed through authenticated REST endpoints with normalized DTOs.
+
+### Architecture
+
+```
+routes → DashboardController → DashboardService → Aggregator / FilterEngine
+                                      ↓
+                               DashboardCache (singleton)
+                                      ↓
+                               DashboardParser / Normalizer
+                                      ↓
+                               DashboardRepository → formatted.json
+```
+
+| Layer | Responsibility |
+| ----- | -------------- |
+| `DashboardRepository` | Read and deserialize the JSON file |
+| `DashboardCache` | In-memory singleton cache (`load`, `refresh`, `clear`, `isLoaded`) |
+| `DashboardParser` | Validate raw JSON structure |
+| `Normalizer` | Convert raw field names to camelCase domain objects |
+| `FilterEngine` | Apply composable query filters |
+| `Aggregator` | Compute KPIs, charts, rankings and map datasets |
+| `DashboardService` | Orchestrate cache, filtering and aggregation |
+| `DashboardController` | HTTP layer only |
+
+### Caching Strategy
+
+- The dataset is loaded **once** on first request (lazy loading).
+- Parsed data is stored in a singleton in-memory cache.
+- Subsequent requests reuse cached data — the file is never re-read per request.
+- `POST /api/dashboard/cache/refresh` reloads the dataset (authenticated).
+
+### Filtering System
+
+All dashboard GET endpoints support optional composable query parameters:
+
+| Parameter | Description |
+| --------- | ----------- |
+| `donor` | Filter by donor |
+| `donationPoint` | Filter by donation point |
+| `city` | Filter by city |
+| `department` | Filter by department |
+| `riskLevel` | `LOW`, `MEDIUM`, `HIGH`, `CRITICAL` |
+| `beneficiaryType` | `T1`, `T2`, `T3` |
+| `beneficiaryStatus` | e.g. `activo`, `suspendido` |
+| `limit` | Positive integer (1–500) for ranked results |
+
+Example:
+
+```bash
+curl "http://localhost:3000/api/dashboard/cancellation-analysis?donor=exito&city=CALI&limit=10" \
+  -H "Authorization: Bearer <your-jwt-token>"
+```
+
+### Available Endpoints
+
+| Endpoint | Method | Auth | Description |
+| -------- | ------ | ---- | ----------- |
+| `/api/dashboard/overview` | GET | JWT | KPIs and global summary |
+| `/api/dashboard/cancellation-analysis` | GET | JWT | Cancellation charts and rankings |
+| `/api/dashboard/predictive-analysis` | GET | JWT | Risk analysis and map datasets |
+| `/api/dashboard/beneficiaries` | GET | JWT | Beneficiary visualization |
+| `/api/dashboard/ecosystem` | GET | JWT | Full ecosystem and map layers |
+| `/api/dashboard/filter-options` | GET | JWT | All available filter values |
+| `/api/dashboard/cache/refresh` | POST | JWT | Reload dataset into cache |
+
+### Example: Dashboard Overview
+
+```bash
+curl http://localhost:3000/api/dashboard/overview \
+  -H "Authorization: Bearer <your-jwt-token>"
+```
+
+Response (`200`):
+
+```json
+{
+  "success": true,
+  "message": "Dashboard overview retrieved successfully",
+  "data": {
+    "kpis": {
+      "totalCancelled": 9854,
+      "totalKgCancelled": 168031.17,
+      "cancellationProbability": 0.1379,
+      "totalGeneral": 71451
+    },
+    "summary": {
+      "totalDonors": 19,
+      "totalDonationPoints": 575,
+      "totalBeneficiaries": 2948,
+      "averageCancellationProbability": 0.1379,
+      "filteredRecords": 1165
+    }
+  }
+}
+```
 
 ## Running with Docker
 
