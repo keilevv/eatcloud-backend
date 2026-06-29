@@ -38,15 +38,15 @@ export interface EcosystemResponseDto {
 }
 
 export type {
-  OverviewResponseDto,
-  KpiDto,
-  OverviewSummaryDto,
+  CancellationAnalysisResponseDto,
+  CancellationAnalysisKpiDto,
+  CancellationAnalysisSummaryDto,
   CacheRefreshResponseDto,
-} from './Kpi.dto';
+} from './CancellationAnalysisDto';
 export type {
   ChartSeriesDto,
   RankingDto,
-  CancellationAnalysisResponseDto,
+  // CancellationAnalysisResponseDto,
   ScatterPointDto,
   PredictiveAnalysisResponseDto,
 } from './Chart.dto';

@@ -1,24 +1,27 @@
-export type { AuthResponseDto } from './AuthResponse.dto';
-export type { LoginRequestDto } from './LoginRequest.dto';
-export type { RegisterRequestDto } from './RegisterRequest.dto';
-export type { UserResponseDto } from './UserResponse.dto';
+export type { AuthResponseDto } from './auth/AuthResponse.dto';
+export type { LoginRequestDto } from './auth/LoginRequest.dto';
+export type { RegisterRequestDto } from './auth/RegisterRequest.dto';
+export type { UserResponseDto } from './auth/UserResponse.dto';
 export type {
   BeneficiaryAnalysisResponseDto,
   BeneficiaryResponseDto,
   CacheRefreshResponseDto,
   EcosystemDonationPointDto,
   EcosystemResponseDto,
-  KpiDto,
-  OverviewResponseDto,
-  OverviewSummaryDto,
-  RiskPointDto,
-} from './Dashboard.dto';
-export type {
+  CancellationAnalysisKpiDto,
   CancellationAnalysisResponseDto,
+  CancellationAnalysisSummaryDto,
+  RiskPointDto,
+} from './dashboard/Dashboard.dto';
+export type {
   ChartSeriesDto,
   PredictiveAnalysisResponseDto,
   RankingDto,
   ScatterPointDto,
-} from './Chart.dto';
-export type { FilterOptionsDto } from './Filter.dto';
-export type { HeatmapPointDto, MapLayerDto, MarkerDto } from './Map.dto';
+} from './dashboard/Chart.dto';
+export type { FilterOptionsDto } from './dashboard/Filter.dto';
+export type {
+  HeatmapPointDto,
+  MapLayerDto,
+  MarkerDto,
+} from './dashboard/Map.dto';

@@ -1,11 +1,11 @@
-export interface KpiDto {
+export interface CancellationAnalysisKpiDto {
   totalCancelled: number;
   totalKgCancelled: number;
   cancellationProbability: number;
   totalGeneral: number;
 }
 
-export interface OverviewSummaryDto {
+export interface CancellationAnalysisSummaryDto {
   totalDonors: number;
   totalDonationPoints: number;
   totalBeneficiaries: number;
@@ -13,9 +13,9 @@ export interface OverviewSummaryDto {
   filteredRecords: number;
 }
 
-export interface OverviewResponseDto {
-  kpis: KpiDto;
-  summary: OverviewSummaryDto;
+export interface CancellationAnalysisResponseDto {
+  kpis: CancellationAnalysisKpiDto;
+  summary: CancellationAnalysisSummaryDto;
 }
 
 export interface CacheRefreshResponseDto {

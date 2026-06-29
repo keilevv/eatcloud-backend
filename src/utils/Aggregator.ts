@@ -5,17 +5,16 @@ import {
   NormalizedRiskDonor,
   NormalizedRiskPoint,
 } from '../interfaces/dashboard.interface';
-import { ChartSeriesDto } from '../dto/Chart.dto';
+
 import {
   BeneficiaryResponseDto,
   FilterOptionsDto,
-  KpiDto,
+  CancellationAnalysisKpiDto,
   MapLayerDto,
-  OverviewResponseDto,
-  RankingDto,
+  CancellationAnalysisResponseDto,
   RiskPointDto,
   ScatterPointDto,
-} from '../dto/Dashboard.dto';
+} from '../dto/dashboard/Dashboard.dto';
 import { filterEngine } from './FilterEngine';
 
 const DEFAULT_TOP_LIMIT = 10;
@@ -23,7 +22,9 @@ const DEFAULT_TOP_LIMIT = 10;
 const round = (value: number, decimals = 2): number =>
   Number(value.toFixed(decimals));
 
-const toKpiDto = (data: NormalizedDashboardData): KpiDto => ({
+const buildCancellationAnalysisKpi = (
+  data: NormalizedDashboardData,
+): CancellationAnalysisKpiDto => ({
   totalCancelled: data.kpis.totalCancelled,
   totalKgCancelled: round(data.kpis.totalKgCancelled),
   cancellationProbability: round(data.kpis.cancellationProbability, 4),
@@ -58,17 +59,6 @@ const toRiskDonorDto = (donor: NormalizedRiskDonor): RiskPointDto => ({
   riskLevel: donor.riskLevel,
 });
 
-const toChartSeries = (
-  label: string,
-  value: number,
-  secondaryValue?: number,
-): ChartSeriesDto => ({
-  label,
-  value: round(value),
-  secondaryValue:
-    secondaryValue !== undefined ? round(secondaryValue) : undefined,
-});
-
 const aggregateDonationPoints = (
   mapPoints: NormalizedMapPoint[],
 ): Map<string, { quantity: number; totalKg: number }> => {
@@ -89,25 +79,11 @@ const aggregateDonationPoints = (
   return aggregated;
 };
 
-const buildRankings = (
-  entries: Array<{ label: string; quantity: number; totalKg: number }>,
-  limit: number,
-): RankingDto[] =>
-  [...entries]
-    .sort((a, b) => b.quantity - a.quantity)
-    .slice(0, limit)
-    .map((entry, index) => ({
-      rank: index + 1,
-      label: entry.label,
-      quantity: round(entry.quantity),
-      totalKg: round(entry.totalKg),
-    }));
-
 export class Aggregator {
-  buildOverview(
+  buildCancellationAnalysis(
     data: NormalizedDashboardData,
     filters: DashboardFilters,
-  ): OverviewResponseDto {
+  ): CancellationAnalysisResponseDto {
     const filtered = filterEngine.filterDataset(data, filters);
     const uniqueDonors = new Set(filtered.mapPoints.map((item) => item.donor));
     const uniquePoints = new Set(
@@ -115,7 +91,7 @@ export class Aggregator {
     );
 
     return {
-      kpis: toKpiDto(data),
+      kpis: buildCancellationAnalysisKpi(data),
       summary: {
         totalDonors: uniqueDonors.size,
         totalDonationPoints: uniquePoints.size,
@@ -126,60 +102,6 @@ export class Aggregator {
         ),
         filteredRecords: filtered.mapPoints.length,
       },
-    };
-  }
-
-  buildCancellationAnalysis(
-    data: NormalizedDashboardData,
-    filters: DashboardFilters,
-  ) {
-    const filtered = filterEngine.filterDataset(data, filters);
-    const donationPointAggregation = aggregateDonationPoints(
-      filtered.mapPoints,
-    );
-
-    const donors = filtered.donorCharts.map((item) =>
-      toChartSeries(item.donor, item.quantity, item.totalKg),
-    );
-
-    const donationPoints = [...donationPointAggregation.entries()].map(
-      ([label, values]) =>
-        toChartSeries(label, values.quantity, values.totalKg),
-    );
-
-    const cancellationVolume = filtered.riskPoints.map((item) =>
-      toChartSeries(item.donationPoint, item.totalKg, item.cancelled),
-    );
-
-    const cancellationCount = filtered.riskPoints.map((item) =>
-      toChartSeries(item.donationPoint, item.cancelled, item.total),
-    );
-
-    const topDonors = buildRankings(
-      filtered.donorCharts.map((item) => ({
-        label: item.donor,
-        quantity: item.quantity,
-        totalKg: item.totalKg,
-      })),
-      filters.limit ?? DEFAULT_TOP_LIMIT,
-    );
-
-    const topDonationPoints = buildRankings(
-      [...donationPointAggregation.entries()].map(([label, values]) => ({
-        label,
-        quantity: values.quantity,
-        totalKg: values.totalKg,
-      })),
-      filters.limit ?? DEFAULT_TOP_LIMIT,
-    );
-
-    return {
-      donors,
-      donationPoints,
-      cancellationVolume,
-      cancellationCount,
-      topDonors,
-      topDonationPoints,
     };
   }
 

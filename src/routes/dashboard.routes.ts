@@ -9,7 +9,7 @@ const withFilters = validate(dashboardFilterValidator);
 
 /**
  * @openapi
- * /api/dashboard/overview:
+ * /api/dashboard/cancellation-analysis:
  *   get:
  *     tags:
  *       - Dashboard
@@ -35,10 +35,10 @@ const withFilters = validate(dashboardFilterValidator);
  *         description: Validation failed
  */
 dashboardRouter.get(
-  '/overview',
+  '/cancellation-analysis',
   authenticate,
   withFilters,
-  dashboardController.overview,
+  dashboardController.cancellationAnalysis,
 );
 
 /**

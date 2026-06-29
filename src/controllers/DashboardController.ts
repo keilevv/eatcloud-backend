@@ -17,19 +17,6 @@ const getFilters = (req: Request): DashboardFilters => ({
 });
 
 export class DashboardController {
-  overview = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
-    try {
-      const data = await dashboardService.getOverview(getFilters(req));
-      sendSuccess(res, data, SUCCESS_MESSAGES.DASHBOARD_OVERVIEW);
-    } catch (error) {
-      next(error);
-    }
-  };
-
   cancellationAnalysis = async (
     req: Request,
     res: Response,
@@ -39,7 +26,7 @@ export class DashboardController {
       const data = await dashboardService.getCancellationAnalysis(
         getFilters(req),
       );
-      sendSuccess(res, data, SUCCESS_MESSAGES.DASHBOARD_CANCELLATION_ANALYSIS);
+      sendSuccess(res, data, SUCCESS_MESSAGES.DASHBOARD_OVERVIEW);
     } catch (error) {
       next(error);
     }

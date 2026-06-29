@@ -7,22 +7,23 @@ import {
   CancellationAnalysisResponseDto,
   EcosystemResponseDto,
   FilterOptionsDto,
-  OverviewResponseDto,
   PredictiveAnalysisResponseDto,
-} from '../dto/Dashboard.dto';
+} from '../dto/dashboard/Dashboard.dto';
 
 export class DashboardService {
-  async getOverview(filters: DashboardFilters): Promise<OverviewResponseDto> {
-    const data = await dashboardCache.load();
-    return aggregator.buildOverview(data, filters);
-  }
-
   async getCancellationAnalysis(
     filters: DashboardFilters,
   ): Promise<CancellationAnalysisResponseDto> {
     const data = await dashboardCache.load();
     return aggregator.buildCancellationAnalysis(data, filters);
   }
+
+  // async getCancellationAnalysis(
+  //   filters: DashboardFilters,
+  // ): Promise<CancellationAnalysisResponseDto> {
+  //   const data = await dashboardCache.load();
+  //   return aggregator.buildCancellationAnalysis(data, filters);
+  // }
 
   async getPredictiveAnalysis(
     filters: DashboardFilters,
