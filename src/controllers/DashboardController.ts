@@ -26,7 +26,7 @@ export class DashboardController {
       const data = await dashboardService.getCancellationAnalysis(
         getFilters(req),
       );
-      sendSuccess(res, data, SUCCESS_MESSAGES.DASHBOARD_OVERVIEW);
+      sendSuccess(res, data, SUCCESS_MESSAGES.DASHBOARD_CANCELLATION_ANALYSIS);
     } catch (error) {
       next(error);
     }

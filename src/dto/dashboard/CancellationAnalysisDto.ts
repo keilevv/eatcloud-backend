@@ -1,3 +1,5 @@
+import { NormalizedDonorChartItem } from "@/interfaces/dashboard.interface";
+
 export interface CancellationAnalysisKpiDto {
   totalCancelled: number;
   totalKgCancelled: number;
@@ -16,6 +18,7 @@ export interface CancellationAnalysisSummaryDto {
 export interface CancellationAnalysisResponseDto {
   kpis: CancellationAnalysisKpiDto;
   summary: CancellationAnalysisSummaryDto;
+  donorsChart: NormalizedDonorChartItem[];
 }
 
 export interface CacheRefreshResponseDto {

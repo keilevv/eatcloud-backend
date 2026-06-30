@@ -1,0 +1,86 @@
+{
+  "kpis": {
+    "total_canceladas": 9854,
+    "total_kg_canceladas": 168031.17,
+    "probabilidad_cancelacion": 0.1379,
+    "total_general": 71451
+  },
+  "graficos": {
+    "donantes": [
+      {
+        "eatc-donor": "alimentoscarnicosco",
+        "cantidad": 2691,
+        "total_kg": 9117.507
+      },
+      "..."
+    ]
+  },
+  "mapas": [
+    {
+      "eatc-lat": 0.830696,
+      "eatc-lon": -77.636421,
+      "eatc-donor": "alimentoscarnicosco",
+      "eatc-pod_name": "EXITO IPIALES",
+      "cantidad": 21,
+      "total_kg": 89.53999999999999
+    },
+    "..."
+  ],
+  "riesgo": {
+    "puntos": [
+      {
+        "donor": "aburra",
+        "pod_name": "ABURRA SAS",
+        "total": 11,
+        "canceladas": 0,
+        "probabilidad": 0,
+        "lat": 6.1199473936464,
+        "lon": -75.633788531065,
+        "total_kg": 8581.2
+      },
+      "..."
+    ],
+    "donantes": [
+      {
+        "donor": "aburra",
+        "total": 11,
+        "canceladas": 0,
+        "probabilidad": 0,
+        "total_kg": 8581.2
+      },
+      "..."
+    ]
+  },
+  "beneficiarios_tipologias": {
+    "tipo_1": [
+      {
+        "lat": 4.621306,
+        "lon": -74.089891,
+        "nombre": "ASOCIACION DE BANCOS DE ALIMENTOS DE COLOMBIA - ABACO",
+        "telefono": "4029305",
+        "estado": "suspendido"
+      },
+      "..."
+    ],
+    "tipo_2": [
+      {
+        "lat": 4.7106875,
+        "lon": -74.0491875,
+        "nombre": "ASOCIACIÓN DE PADRES USUARIOS DE LOS HOGARES DE BIENESTAR SIMÓN BOLÍVAR",
+        "telefono": "8103936",
+        "estado": "pasivo"
+      },
+      "..."
+    ],
+    "tipo_3": [
+      {
+        "lat": 5.7892293,
+        "lon": -73.0620088,
+        "nombre": "FUNDACION POR LA VIDA DICAR",
+        "telefono": "3102241373",
+        "estado": "rechazado"
+      },
+      "..."
+    ]
+  }
+}
