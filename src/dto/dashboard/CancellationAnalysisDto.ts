@@ -20,6 +20,7 @@ export interface CancellationAnalysisResponseDto {
   summary: CancellationAnalysisSummaryDto;
   donorsChart: NormalizedDonorChartItem[];
   topDonationPoints: NormalizedMapPoint[];
+  mapPoints: NormalizedMapPoint[];
 }
 
 export interface CacheRefreshResponseDto {

@@ -104,6 +104,7 @@ export class Aggregator {
       },
       donorsChart: data.donorCharts,
       topDonationPoints: data.topDonationPoints,
+      mapPoints: filtered.mapPoints,
     };
   }
 
