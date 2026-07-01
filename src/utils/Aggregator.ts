@@ -103,6 +103,7 @@ export class Aggregator {
         filteredRecords: filtered.mapPoints.length,
       },
       donorsChart: data.donorCharts,
+      topDonationPoints: data.topDonationPoints,
     };
   }
 

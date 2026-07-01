@@ -130,6 +130,7 @@ export interface NormalizedBeneficiary {
 export interface NormalizedDashboardData {
   kpis: NormalizedKpi;
   donorCharts: NormalizedDonorChartItem[];
+  topDonationPoints: NormalizedMapPoint[];
   mapPoints: NormalizedMapPoint[];
   riskPoints: NormalizedRiskPoint[];
   riskDonors: NormalizedRiskDonor[];

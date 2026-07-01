@@ -159,6 +159,7 @@ const normalizeDonorChartItem = (
   totalKg: normalizeNumber(raw.total_kg, 'total_kg'),
 });
 
+
 const normalizeMapPoint = (raw: RawMapPoint): NormalizedMapPoint => {
   const donationPoint = raw['eatc-pod_name'].trim();
   const city = extractCityFromDonationPoint(donationPoint);
@@ -248,11 +249,41 @@ const mapBeneficiaryStatusToRisk = (status: string): RiskLevel => {
   return 'CRITICAL';
 };
 
+/**
+ * Aggregates map point records by donation point, summing quantity and totalKg,
+ * then returns the top 10 entries ranked by total quantity (descending).
+ * The id of each entry is the donationPoint name.
+ */
+const getTopDonationPoints = (
+  rawMapPoints: RawMapPoint[],
+  topN = 10,
+): NormalizedMapPoint[] => {
+  const aggregated = new Map<string, NormalizedMapPoint>();
+
+  for (const raw of rawMapPoints) {
+    const normalized = normalizeMapPoint(raw);
+    const key = normalized.donationPoint;
+    const existing = aggregated.get(key);
+
+    if (existing) {
+      existing.quantity += normalized.quantity;
+      existing.totalKg += normalized.totalKg;
+    } else {
+      aggregated.set(key, { ...normalized });
+    }
+  }
+
+  return [...aggregated.values()]
+    .sort((a, b) => b.quantity - a.quantity)
+    .slice(0, topN);
+};
+
 export const normalizeDashboardDataset = (
   raw: RawDashboardDataset,
 ): NormalizedDashboardData => ({
   kpis: normalizeKpis(raw.kpis),
   donorCharts: raw.graficos.donantes.map(normalizeDonorChartItem),
+  topDonationPoints: getTopDonationPoints(raw.mapas),
   mapPoints: raw.mapas.map(normalizeMapPoint),
   riskPoints: raw.riesgo.puntos.map(normalizeRiskPoint),
   riskDonors: raw.riesgo.donantes.map(normalizeRiskDonor),
@@ -268,3 +299,4 @@ export const normalizeDashboardDataset = (
     ),
   ],
 });
+

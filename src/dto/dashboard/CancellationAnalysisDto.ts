@@ -1,4 +1,4 @@
-import { NormalizedDonorChartItem } from "@/interfaces/dashboard.interface";
+import { NormalizedDonorChartItem, NormalizedMapPoint } from "@/interfaces/dashboard.interface";
 
 export interface CancellationAnalysisKpiDto {
   totalCancelled: number;
@@ -19,6 +19,7 @@ export interface CancellationAnalysisResponseDto {
   kpis: CancellationAnalysisKpiDto;
   summary: CancellationAnalysisSummaryDto;
   donorsChart: NormalizedDonorChartItem[];
+  topDonationPoints: NormalizedMapPoint[];
 }
 
 export interface CacheRefreshResponseDto {
