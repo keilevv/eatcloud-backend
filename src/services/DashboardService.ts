@@ -18,13 +18,6 @@ export class DashboardService {
     return aggregator.buildCancellationAnalysis(data, filters);
   }
 
-  // async getCancellationAnalysis(
-  //   filters: DashboardFilters,
-  // ): Promise<CancellationAnalysisResponseDto> {
-  //   const data = await dashboardCache.load();
-  //   return aggregator.buildCancellationAnalysis(data, filters);
-  // }
-
   async getPredictiveAnalysis(
     filters: DashboardFilters,
   ): Promise<PredictiveAnalysisResponseDto> {

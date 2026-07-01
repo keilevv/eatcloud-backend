@@ -120,10 +120,11 @@ export class Aggregator {
       (a, b) => b.probability - a.probability,
     );
 
-    const excellentPoints = filtered.riskPoints
-      .filter((point) => point.probability === 0)
-      .slice(0, filters.limit ?? DEFAULT_TOP_LIMIT)
-      .map(toRiskPointDto);
+    const excellentPoints = new Set(
+      filtered.riskPoints
+        .filter((point) => point.probability === 0)
+        .map((point) => point.donationPoint)
+    ).size;
 
     const scatterPlot: ScatterPointDto[] = filtered.riskPoints.map((point) => ({
       label: point.donationPoint,

@@ -34,7 +34,7 @@ export interface ScatterPointDto {
 export interface PredictiveAnalysisResponseDto {
   highestRiskPoint: RiskPointDto | null;
   highestRiskDonor: RiskPointDto | null;
-  excellentPoints: RiskPointDto[];
+  excellentPoints: number;
   topRiskDonors: RiskPointDto[];
   topRiskDonationPoints: RiskPointDto[];
   scatterPlot: ScatterPointDto[];
